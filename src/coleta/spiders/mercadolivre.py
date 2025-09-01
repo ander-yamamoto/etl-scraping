@@ -26,16 +26,14 @@ class MercadolivreSpider(scrapy.Spider):
             if old_block:
                 frac = old_block.css("span.andes-money-amount__fraction::text").get()
                 cents = old_block.css("span.andes-money-amount__cents::text").get()
-                if frac and cents:
-                    old_price = frac + "," + cents
+                old_price = f"{frac}.{cents}" if frac and cents else None
 
             # Preço atual (dentro de poly-price__current)
             new_block = price_block.css("div.poly-price__current")
             if new_block:
                 frac = new_block.css("span.andes-money-amount__fraction::text").get()
                 cents = new_block.css("span.andes-money-amount__cents::text").get()
-                if frac and cents:
-                    current_price = frac + "," + cents
+                current_price = f"{frac}.{cents}" if frac and cents else None
                 discount = new_block.css("span.andes-money-amount__discount::text").get()
 
             reviews_total = product.css('span.poly-reviews__total::text').get()
@@ -76,3 +74,15 @@ class MercadolivreSpider(scrapy.Spider):
                 self.page_count += 1
 
                 yield scrapy.Request(next_url, callback=self.parse)
+
+
+
+### comandos para rodar o spider e salvar em jsonl
+#scrapy startproject coleta 
+#scrapy genspider mercadolivre https://lista.mercadolivre.com.br/tenis-corrida-masculino
+
+### comandos para shell
+#scrapy shell
+#fetch('https://lista.mercadolivre.com.br/tenis-corrida-masculino')
+#products=response.css('div.poly-card__content')
+#products.css('span.poly-component__brand')
